@@ -106,7 +106,7 @@ HARDLINE_PATTERNS = [
     # never saw them (#102371). Anchored to command position like the other command-name rules,
     # and gated on a raw block device operand — `shred secret.txt` is legitimate secure deletion
     # of a regular file and must stay clean. The optional quote covers `wipefs -a "/dev/sda"`.
-    (_CMDPOS + r'(shred|wipefs|blkdiscard)\b[^|;&\n]*\s["\']?/dev/(sd|nvme|hd|mmcblk|vd|xvd)[a-z0-9]*',
+    (_CMDPOS + r'(shred|wipefs|blkdiscard)\b(?:(?!&&)(?:[<>]\s*&|&\s*>|[^|;\n&]))*\s["\']?/dev/(sd|nvme|hd|mmcblk|vd|xvd)[a-z0-9]*',
      "raw block device destruction (shred/wipefs/blkdiscard)"),
     # Positionless rules (no command-name token: `>` sits mid-command, the fork bomb is a function
     # definition) are matched against a QUOTE-MASKED variant (_QUOTE_MASKED_HARDLINE_DESCRIPTIONS /

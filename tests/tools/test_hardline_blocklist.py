@@ -97,6 +97,12 @@ _HARDLINE_BLOCK = [
     "`shred -n1 /dev/sdb`",
     'sh -c "blkdiscard /dev/sda"',
     'wipefs -a "/dev/sda"',
+    # An fd redirect (2>&1 / &>file) between the command name and the device must not cut
+    # the argument tail short: `&` there is a redirect character, not a command separator.
+    "shred -v 2>&1 /dev/sda",
+    "wipefs -a 2>&1 /dev/sda",
+    "blkdiscard -f &>/dev/null /dev/nvme0n1",
+    "shred 2>& 1 /dev/sda",
     "echo bad > /dev/sda",
     "cat /dev/urandom > /dev/sdb",
     # Fork bomb
@@ -191,6 +197,9 @@ _HARDLINE_ALLOW = [
     "blkdiscard --help",
     "man shred",
     "shred -n1 secret.txt && ls /dev/sda",
+    # A bare `&` IS a separator: the device belongs to the next command and must stay clean.
+    "shred secret.txt & ls /dev/sda",
+    "shred -n1 secret.txt & cat /dev/sda",
     # Redirect to regular files / non-block devices
     "echo done > /tmp/flag",
     "echo test > /dev/null",
